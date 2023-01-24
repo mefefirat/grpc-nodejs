@@ -1,0 +1,42 @@
+version: '3'
+services:
+  grpc-nodejs-server:
+    container_name: grpc-nodejs-server
+    image: node:latest
+    tty: true
+    build:
+      context: /var/www/html
+    working_dir: /var/www/html
+    ports:
+      - "50051:50051"
+    volumes:
+      - /var/www/nodejs/grpc/server:/var/www/html
+    networks:
+      grpc:
+        ipv4_address: 10.16.0.2
+
+  grpc-nodejs-client:
+    container_name: grpc-nodejs-client
+    image: node:latest
+    tty: true
+    build:
+      context: /var/www/html
+    working_dir: /var/www/html
+    ports:
+      - "8000:3000"
+    volumes:
+      - /var/www/nodejs/grpc/client:/var/www/html
+    networks:
+      grpc:
+        ipv4_address: 10.16.0.3
+
+
+networks:
+  grpc:
+    name: grpc
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.16.0.0/16"
+          gateway: "10.16.0.1"
