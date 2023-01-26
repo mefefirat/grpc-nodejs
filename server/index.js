@@ -1,58 +1,68 @@
-const grpc = require("@grpc/grpc-js");
 const PROTO_PATH = "./protos/user.proto";
-var protoLoader = require("@grpc/proto-loader");
+const grpc = require('@grpc/grpc-js');
+const protoLoader = require('@grpc/proto-loader');
+const packageDefinition = protoLoader.loadSync(
+    PROTO_PATH, {
+        keepCase: true,
+        longs: String,
+        enums: String,
+        defaults: true,
+        oneofs: true
+    });
 
-const options = {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true,
-};
-var packageDefinition = protoLoader.loadSync(PROTO_PATH, options);
-const userProto = grpc.loadPackageDefinition(packageDefinition);
+const UserProto = grpc.loadPackageDefinition(packageDefinition).UserService;
 
-const server = new grpc.Server();
-const users = [
-    { id: "1", first_name: "Note 1", last_name: "Content 1", email: "Post image 1" },
-    { id: "2", first_name: "Note 2", last_name: "Content 2", email: "Post image 2" },
+let users = [
+    {
+        id: 1,
+        first_name: 'test',
+        last_name: 'sdfsdfsdf',
+        email: true
+    },
+    {
+        id: 1,
+        first_name: 'test',
+        last_name: 'sdfsdfsdf',
+        email: false
+    },
 ];
 
-server.addService(userProto.UserService.service, {
-    GetAllUsers: (_, callback) => {
-        callback(null, users);
-    },
-    getUsers: (_, callback) => {
-        const userId = _.request.id;
-        const userItem = users.find(({ id }) => userId == id);
-        callback(null, userItem);
-    },
-    deleteUser: (_, callback) => {
-        const userId = _.request.id;
-        //_users = users.filter(({ id }) => id !== userId);
-        callback(null, {});
-    },
-    editUser: (_, callback) => {
-        const userId = _.request.id;
-        const userItem = users.find(({ id }) => userId == id);
-        userItem.first_name = _.request.first_name;
-        userItem.last_name = _.request.last_name;
-        userItem.email = _.request.email;
-        callback(null, userItem);
-    },
-    addUser: (call, callback) => {
-        let _users = { id: Date.now(), ...call.request };
-        user.push(_users);
-        callback(null, _users);
-    },
-});
+function getUsers(_, callback) {
+    callback(null, { users: users });
+}
 
-server.bindAsync(
-    "0.0.0.0:50051",
-    grpc.ServerCredentials.createInsecure(),
-    (error, port) => {
-        console.log("Server at port:", port);
-        console.log("Server running at http://127.0.0.1:50051");
-        server.start();
-    }
-);
+function getUser(_, callback) {
+
+    let user = {
+        id: 1,
+        first_name: 'test'
+    };
+    callback(null, user);
+}
+
+function addUser(_, callback) {
+
+    users.push({
+        id: _.request.id,
+        first_name: _.request.first_name,
+        last_name: _.request.last_name,
+        email: _.request.email
+    });
+    callback(null, users);
+}
+
+function getServer() {
+    const server = new grpc.Server();
+    server.addService(UserProto.UserService.service, {
+        GetUsers: getUsers,
+        GetUser: getUser,
+        AddUser: addUser
+
+    });
+    return server;
+}
+
+const routeServer = getServer();
+routeServer.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), () => {
+    routeServer.start();
+});

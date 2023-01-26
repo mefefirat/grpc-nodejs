@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package UserService;
+
+message User {
+    int32 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    bool email = 4;
+}
+
+service UserService {
+  rpc GetUsers (Empty) returns (Users) {}
+  rpc GetUser (UserId) returns (User) {}
+  rpc AddUser (UserId) returns (User) {}
+}
+
+message UserId {
+  string id = 1;
+}
+
+message Users {
+    repeated User users = 1;
+}
+
+message Empty {}

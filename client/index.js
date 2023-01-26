@@ -1,5 +1,5 @@
 const grpc = require("@grpc/grpc-js");
-var protoLoader = require("@grpc/proto-loader");
+const protoLoader = require("@grpc/proto-loader");
 const PROTO_PATH = "./protos/user.proto";
 
 const options = {
@@ -10,10 +10,10 @@ const options = {
     oneofs: true,
 };
 
-var packageDefinition = protoLoader.loadSync(PROTO_PATH, options);
+const packageDefinition = protoLoader.loadSync(PROTO_PATH, options);
 
-const UserService = grpc.loadPackageDefinition(packageDefinition).UserService;
+const Service = grpc.loadPackageDefinition(packageDefinition).UserService;
 
-const client = new UserService("localhost:50051", grpc.credentials.createInsecure());
+const client = new Service.UserService("10.16.0.2:50051", grpc.credentials.createInsecure());
 
 module.exports = client;

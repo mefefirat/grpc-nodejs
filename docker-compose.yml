@@ -11,6 +11,7 @@ services:
       - "50051:50051"
     volumes:
       - /var/www/nodejs/grpc/server:/var/www/html
+      - /var/www/nodejs/grpc/protos:/var/www/html/protos
     networks:
       grpc:
         ipv4_address: 10.16.0.2
@@ -26,6 +27,7 @@ services:
       - "8000:3000"
     volumes:
       - /var/www/nodejs/grpc/client:/var/www/html
+      - /var/www/nodejs/grpc/protos:/var/www/html/protos
     networks:
       grpc:
         ipv4_address: 10.16.0.3
