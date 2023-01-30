@@ -1,19 +1,73 @@
-const grpc = require("@grpc/grpc-js");
-const protoLoader = require("@grpc/proto-loader");
-const PROTO_PATH = "./protos/user.proto";
+const express = require('express');
+const bodyParser = require('body-parser');
 
-const options = {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true,
-};
 
-const packageDefinition = protoLoader.loadSync(PROTO_PATH, options);
+const app = express();
 
-const Service = grpc.loadPackageDefinition(packageDefinition).UserService;
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const client = new Service.UserService("10.16.0.2:50051", grpc.credentials.createInsecure());
+const port = 3000;
+const model = require("./models/model");
 
-module.exports = client;
+
+
+
+
+app.get('/users', async (req, res) => {
+
+    try {
+        let users = await model.getUsers();
+        res.status(200).send(users);
+        console.log(users);
+
+    } catch (error)
+    {
+        res.status(500).send(error);
+    }
+});
+
+app.get('/user/:id', async (req, res) => {
+
+    try {
+        let user = await model.getUser(req.params.id);
+        res.status(200).send(user);
+    } catch (error)
+    {
+        res.status(500).send(error);
+    }
+});
+
+app.post('/user', async (req, res) => {
+
+    let data = {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+    }
+
+    try {
+        let user = await model.addUser(data);
+        res.status(200).send(user);
+    } catch (error)
+    {
+        console.log("hata");
+        res.status(500).send(error);
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+});
+
+/*client.GetUser({name: "Mustafa", id: 1}, function(err, response) {
+    console.log('User:', response);
+});*/
+
+/*client.AddUser({id: 3, first_name: "Ahmet", last_name: "Yaman", email: true}, function(err, response) {
+    console.log(response);
+});*/
+
+/*client.GetUsers({}, function(err, response) {
+    console.log(response);
+});*/

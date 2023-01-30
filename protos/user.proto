@@ -3,16 +3,16 @@ syntax = "proto3";
 package UserService;
 
 message User {
-    int32 id = 1;
+    string id = 1;
     string first_name = 2;
     string last_name = 3;
-    bool email = 4;
+    string email = 4;
 }
 
 service UserService {
   rpc GetUsers (Empty) returns (Users) {}
   rpc GetUser (UserId) returns (User) {}
-  rpc AddUser (UserId) returns (User) {}
+  rpc AddUser (User) returns (User) {}
 }
 
 message UserId {
