@@ -19,7 +19,8 @@ function getServer() {
     server.addService(Proto.UserService.service, {
         GetUsers: Service.getUsers,
         GetUser: Service.getUser,
-        AddUser: Service.addUser
+        AddUser: Service.addUser,
+        GetUserStream: Service.getUserStream
 
     });
     return server;

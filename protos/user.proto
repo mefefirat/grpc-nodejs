@@ -13,6 +13,7 @@ service UserService {
   rpc GetUsers (Empty) returns (Users) {}
   rpc GetUser (UserId) returns (User) {}
   rpc AddUser (User) returns (User) {}
+  rpc GetUserStream (Empty) return (stream Users) {}
 }
 
 message UserId {

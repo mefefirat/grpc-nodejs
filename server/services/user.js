@@ -20,4 +20,11 @@ Service.addUser = (_, callback) => {
     callback(null, user);
 }
 
+Service.getUserStream = (_, callback) => {
+
+    for (var i = 0; i < users.length; i++) {
+        callback(null, users[i]);
+    }
+};
+
 module.exports = Service;
